@@ -1,0 +1,389 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: operations
+    description: Authenticated hospitality operations
+  - name: guest
+    description: Public guest service requests
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /me:
+    get:
+      operationId: getCurrentUser
+      tags: [operations]
+      summary: Get the current operator
+      responses:
+        "200":
+          description: Current operator and business context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUser"
+        "401":
+          description: Authentication required
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [operations]
+      summary: Get the operations dashboard
+      responses:
+        "200":
+          description: Dashboard summary and active requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+        "401":
+          description: Authentication required
+  /tables:
+    get:
+      operationId: listTables
+      tags: [operations]
+      summary: List tables in the active branch
+      responses:
+        "200":
+          description: Tables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Table"
+        "401":
+          description: Authentication required
+    post:
+      operationId: createTable
+      tags: [operations]
+      summary: Create a table and its guest QR route
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TableInput"
+      responses:
+        "201":
+          description: Created table
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Table"
+        "400":
+          description: Invalid table
+        "401":
+          description: Authentication required
+  /services:
+    get:
+      operationId: listServices
+      tags: [operations]
+      summary: List guest services
+      responses:
+        "200":
+          description: Enabled services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+        "401":
+          description: Authentication required
+  /requests:
+    get:
+      operationId: listRequests
+      tags: [operations]
+      summary: List service requests
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [REQUESTED, ACCEPTED, IN_PROGRESS, COMPLETED, DECLINED, CANCELLED]
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+      responses:
+        "200":
+          description: Requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServiceRequest"
+        "401":
+          description: Authentication required
+  /requests/{id}/status:
+    patch:
+      operationId: updateRequestStatus
+      tags: [operations]
+      summary: Update the lifecycle state of a request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestStatusInput"
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequest"
+        "400":
+          description: Invalid status
+        "401":
+          description: Authentication required
+        "404":
+          description: Request not found
+  /guest/{businessSlug}/{tableCode}:
+    get:
+      operationId: getGuestTable
+      tags: [guest]
+      summary: Resolve a public table QR route
+      parameters:
+        - name: businessSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guest table context and available services
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestTable"
+        "404":
+          description: Table not found
+  /guest/{businessSlug}/{tableCode}/requests:
+    post:
+      operationId: createGuestRequest
+      tags: [guest]
+      summary: Create a public service request
+      parameters:
+        - name: businessSlug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tableCode
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuestRequestInput"
+      responses:
+        "201":
+          description: Created guest request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequest"
+        "400":
+          description: Invalid or duplicate request
+        "404":
+          description: Table or service not found
+  /guest/requests/{trackingToken}:
+    get:
+      operationId: getGuestRequest
+      tags: [guest]
+      summary: Track a guest request without an account
+      parameters:
+        - name: trackingToken
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Guest request status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceRequest"
+        "404":
+          description: Request not found
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    CurrentUser:
+      type: object
+      required: [id, name, email, role, business]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role:
+          type: string
+          enum: [OWNER, MANAGER, STAFF]
+        business:
+          $ref: "#/components/schemas/Business"
+    Business:
+      type: object
+      required: [id, name, slug, branchName]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+        branchName: { type: string }
+    Dashboard:
+      type: object
+      required: [business, stats, requests, staff]
+      properties:
+        business:
+          $ref: "#/components/schemas/Business"
+        stats:
+          $ref: "#/components/schemas/DashboardStats"
+        requests:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceRequest"
+        staff:
+          type: array
+          items:
+            $ref: "#/components/schemas/StaffSummary"
+    DashboardStats:
+      type: object
+      required: [active, today, completed, averageResponseSeconds]
+      properties:
+        active: { type: integer }
+        today: { type: integer }
+        completed: { type: integer }
+        averageResponseSeconds: { type: integer }
+    StaffSummary:
+      type: object
+      required: [id, name, department, status]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        department: { type: string }
+        status:
+          type: string
+          enum: [AVAILABLE, BUSY, OFFLINE]
+    Table:
+      type: object
+      required: [id, code, name, area, active, guestPath, requestCount]
+      properties:
+        id: { type: integer }
+        code: { type: string }
+        name: { type: string }
+        area: { type: string }
+        active: { type: boolean }
+        guestPath: { type: string }
+        requestCount: { type: integer }
+    TableInput:
+      type: object
+      required: [name, area]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 40 }
+        area: { type: string, minLength: 1, maxLength: 60 }
+    Service:
+      type: object
+      required: [id, name, icon, department, priority, active]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        icon: { type: string }
+        department: { type: string }
+        priority:
+          type: string
+          enum: [NORMAL, HIGH, URGENT]
+        active: { type: boolean }
+    ServiceRequest:
+      type: object
+      required: [id, trackingToken, tableName, tableArea, serviceName, serviceIcon, priority, status, createdAt]
+      properties:
+        id: { type: integer }
+        trackingToken: { type: string }
+        tableName: { type: string }
+        tableArea: { type: string }
+        serviceName: { type: string }
+        serviceIcon: { type: string }
+        priority:
+          type: string
+          enum: [NORMAL, HIGH, URGENT]
+        status:
+          type: string
+          enum: [REQUESTED, ACCEPTED, IN_PROGRESS, COMPLETED, DECLINED, CANCELLED]
+        note: { type: ["string", "null"] }
+        assignedTo: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    RequestStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ACCEPTED, IN_PROGRESS, COMPLETED, DECLINED, CANCELLED]
+    GuestTable:
+      type: object
+      required: [businessName, businessSlug, branchName, tableName, tableCode, services]
+      properties:
+        businessName: { type: string }
+        businessSlug: { type: string }
+        branchName: { type: string }
+        tableName: { type: string }
+        tableCode: { type: string }
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/Service"
+    GuestRequestInput:
+      type: object
+      required: [serviceId]
+      properties:
+        serviceId: { type: integer }
+        note: { type: string, maxLength: 240 }
+

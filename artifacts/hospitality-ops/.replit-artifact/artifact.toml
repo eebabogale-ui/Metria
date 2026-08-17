@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Hospitality Ops"
+description = "A modern hospitality service operations platform for businesses to manage tables, QR guest requests, staff workflows, and request status in real time."
+version = "1.0.0"
+id = "artifacts/hospitality-ops"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23011
+
+[services.development]
+run = "pnpm --filter @workspace/hospitality-ops run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hospitality-ops", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/hospitality-ops/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23011"
+BASE_PATH = "/"
