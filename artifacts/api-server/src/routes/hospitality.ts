@@ -410,6 +410,21 @@ router.patch("/requests/:id/status", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Request not found" });
     return;
   }
+  const allowedTransitions: Record<string, readonly string[]> = {
+    REQUESTED: ["ACCEPTED", "DECLINED", "CANCELLED"],
+    ACCEPTED: ["IN_PROGRESS", "CANCELLED"],
+    IN_PROGRESS: ["COMPLETED", "CANCELLED"],
+    COMPLETED: [],
+    DECLINED: [],
+    CANCELLED: [],
+  };
+  if (!allowedTransitions[existing.status]?.includes(body.data.status)) {
+    res.status(409).json({
+      error: `Cannot move a ${existing.status.toLowerCase()} request to ${body.data.status.toLowerCase()}`,
+    });
+    return;
+  }
+
   const now = new Date();
   await db
     .update(serviceRequestsTable)

@@ -3,6 +3,7 @@ import { ClerkProvider, SignIn, SignUp, useAuth, useClerk } from '@clerk/react';
 import { publishableKeyFromHost } from '@clerk/react/internal';
 import { shadcn } from '@clerk/themes';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
 import { Route, Router as WouterRouter, Switch, Redirect, useLocation } from 'wouter';
 
 import { ErrorBoundary } from '@/components/error-boundary';
@@ -134,6 +135,7 @@ function ClerkProviderWithRoutes() {
     <QueryClientProvider client={queryClient}>
       <ClerkQueryClientCacheInvalidator />
       <RoutedErrorBoundary><SignOutAwareRoutes /></RoutedErrorBoundary>
+      <Toaster richColors closeButton position="top-right" />
     </QueryClientProvider>
   </ClerkProvider>;
 }
