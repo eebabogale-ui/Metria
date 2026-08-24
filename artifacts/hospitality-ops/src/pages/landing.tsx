@@ -1,51 +1,210 @@
-import { ArrowRight, Check, ChevronDown, Clock3, QrCode, Radio, ShieldCheck, Sparkles } from 'lucide-react';
-import { Link } from 'wouter';
+import React from 'react';
+import { useLocation } from 'wouter';
+import {
+  Bell,
+  Sparkles,
+  Zap,
+  CheckCircle2,
+  ArrowRight,
+  QrCode,
+  Users,
+  BarChart3,
+  ShieldCheck,
+  Building,
+} from 'lucide-react';
 
 export function LandingPage() {
+  const [, setLocation] = useLocation();
+
   return (
-    <div className="noise min-h-[100dvh] overflow-hidden bg-background">
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-8 lg:px-10">
-        <Link href="/" className="flex items-center gap-3" data-testid="link-landing-logo">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground font-display text-2xl font-semibold">H</span>
-          <span><span className="block text-[16px] font-extrabold tracking-tight">harbor</span><span className="block font-mono-app text-[9px] uppercase tracking-[0.2em] text-muted-foreground">service operations</span></span>
-        </Link>
-        <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex"><a href="#how-it-works" data-testid="link-how-it-works">How it works</a><a href="#for-teams" data-testid="link-for-teams">For teams</a><a href="#proof" data-testid="link-proof">The difference</a></nav>
-        <div className="flex items-center gap-2"><Link href="/sign-in" className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground sm:inline-flex" data-testid="link-landing-sign-in">Sign in</Link><Link href="/sign-up" className="inline-flex h-10 items-center gap-2 rounded-xl bg-foreground px-4 text-sm font-bold text-background transition hover:-translate-y-0.5" data-testid="link-landing-start">Start a workspace <ArrowRight size={15} /></Link></div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans select-none">
+      {/* Navigation Header */}
+      <header className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 font-black flex items-center justify-center font-display text-2xl">S</span>
+          <span className="text-xl font-black tracking-tight text-white uppercase">SilentServe</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setLocation('/demo')}
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-amber-400 font-bold text-xs rounded-xl transition flex items-center gap-1.5"
+          >
+            <Sparkles className="w-3.5 h-3.5" /> View Demo
+          </button>
+          <button
+            onClick={() => setLocation('/sign-in')}
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition uppercase tracking-wider"
+          >
+            Start Free
+          </button>
+        </div>
       </header>
 
-      <main>
-        <section className="relative mx-auto max-w-7xl px-5 pb-20 pt-16 sm:px-8 sm:pt-24 lg:px-10 lg:pb-28 lg:pt-32">
-          <div className="absolute right-[-10%] top-[-5%] -z-0 h-[540px] w-[540px] rounded-full bg-accent/60 blur-3xl" />
-          <div className="relative z-10 max-w-4xl">
-            <div className="animate-in inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 font-mono-app text-[10px] font-medium uppercase tracking-[0.17em] text-primary"><span className="pulse-soft h-1.5 w-1.5 rounded-full bg-primary" /> Built for the floor</div>
-            <h1 className="animate-in animate-in-delay-1 mt-7 max-w-4xl text-balance font-display text-[clamp(4rem,10vw,8.7rem)] leading-[.83] tracking-[-0.055em] text-foreground">Service, <em className="text-primary">without</em> the scramble.</h1>
-            <p className="animate-in animate-in-delay-2 mt-8 max-w-xl text-lg leading-8 text-muted-foreground sm:text-xl">Harbor turns every “could we get…” into a clear next step — from the guest’s table to the team that makes it happen.</p>
-            <div className="animate-in animate-in-delay-3 mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"><Link href="/sign-up" className="inline-flex h-13 items-center justify-center gap-3 rounded-xl bg-primary px-6 text-base font-bold text-primary-foreground shadow-md shadow-primary/20 transition hover:-translate-y-1" data-testid="link-hero-start">Bring your floor online <ArrowRight size={18} /></Link><a href="#how-it-works" className="inline-flex h-13 items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold text-muted-foreground hover:text-foreground" data-testid="link-hero-learn">See how it works <ChevronDown size={16} /></a></div>
-          </div>
-          <div className="relative z-10 mt-20 grid max-w-5xl grid-cols-2 border-y border-border/80 py-5 sm:grid-cols-4">
-            {[['01', 'Instant requests'], ['02', 'One live queue'], ['03', 'Clear ownership'], ['04', 'Quiet confidence']].map(([number, label]) => <div key={number} className="flex items-center gap-3 border-r border-border px-3 py-3 first:pl-0 last:border-0 sm:px-5"><span className="font-mono-app text-[10px] text-primary">{number}</span><span className="text-xs font-semibold text-muted-foreground">{label}</span></div>)}
-          </div>
-        </section>
+      {/* Hero Section */}
+      <section className="max-w-5xl mx-auto px-6 pt-16 pb-24 text-center">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-semibold text-amber-400 mb-8">
+          <Zap className="w-3.5 h-3.5" /> Next-Gen QR Service Protocol for Hospitality
+        </div>
 
-        <section id="how-it-works" className="bg-foreground px-5 py-20 text-background sm:px-8 lg:px-10 lg:py-28">
-          <div className="mx-auto max-w-7xl"><div className="max-w-2xl"><p className="font-mono-app text-[10px] uppercase tracking-[0.18em] text-primary">The handoff, redesigned</p><h2 className="mt-5 font-display text-5xl leading-[.95] tracking-[-0.04em] sm:text-7xl">One small scan.<br /><span className="text-primary">A calmer shift.</span></h2></div>
-            <div className="mt-16 grid gap-px overflow-hidden rounded-2xl border border-background/15 bg-background/15 md:grid-cols-3">
-              {[{num:'01', icon:QrCode, title:'Guests scan once', body:'A table QR opens a focused, branded request menu. No app. No awkward hand raise.'}, {num:'02', icon:Radio, title:'Teams see clearly', body:'Requests land in one live command center with table, service, priority, and time attached.'}, {num:'03', icon:ShieldCheck, title:'Every handoff lands', body:'Accept, own, progress, complete. The whole floor knows what is moving and what is done.'}].map(({num, icon: Icon, title, body}) => <div key={num} className="bg-foreground p-7 sm:p-9"><span className="font-mono-app text-xs text-primary">{num}</span><Icon className="mt-16 text-background/75" size={25} strokeWidth={1.5} /><h3 className="mt-8 font-display text-3xl">{title}</h3><p className="mt-3 text-sm leading-6 text-background/60">{body}</p></div>)}
+        <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white uppercase leading-none">
+          Silent service. <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">
+            Faster response.
+          </span>
+        </h1>
+
+        <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mt-6 leading-relaxed">
+          Let guests call your team with one tap. No app download. No shouting across the room. No waiting on hold. Real-time tablet dispatch for restaurants, hotels, resorts, and cafes.
+        </p>
+
+        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button
+            onClick={() => setLocation('/demo')}
+            className="w-full sm:w-auto px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-2xl transition flex items-center justify-center gap-2 uppercase tracking-wider shadow-xl shadow-amber-500/10"
+          >
+            Launch Interactive Demo <ArrowRight className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setLocation('/sign-up')}
+            className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white font-bold text-sm rounded-2xl transition flex items-center justify-center gap-2 uppercase tracking-wider"
+          >
+            Create Business Workspace
+          </button>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="bg-slate-900 border-y border-slate-800 py-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-xs font-mono uppercase tracking-widest text-amber-400">HOW IT WORKS</h2>
+            <p className="text-3xl font-black text-white mt-2 uppercase tracking-tight">3 Simple Steps to Effortless Service</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xl mb-6">
+                1
+              </div>
+              <h3 className="text-xl font-bold text-white uppercase tracking-tight">1. Guest Scans QR</h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                Guest points phone camera at table or cabana QR code. Opens instantly in web browser without app installation or login.
+              </p>
+            </div>
+
+            <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xl mb-6">
+                2
+              </div>
+              <h3 className="text-xl font-bold text-white uppercase tracking-tight">2. One Tap Call</h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                Guest taps one button. Service request instantly syncs across staff tablet devices via multi-tenant Firestore realtime channels.
+              </p>
+            </div>
+
+            <div className="bg-slate-950 border border-slate-800 rounded-3xl p-8">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xl mb-6">
+                3
+              </div>
+              <h3 className="text-xl font-bold text-white uppercase tracking-tight">3. Atomic Claim & Response</h3>
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                Staff member claims request with transaction guarantees. Guest sees who is coming ("Maria is on the way").
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section id="for-teams" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
-          <div className="grid gap-14 lg:grid-cols-[.7fr_1.3fr] lg:items-end"><div><p className="font-mono-app text-[10px] uppercase tracking-[0.18em] text-primary">Made for momentum</p><h2 className="mt-5 font-display text-5xl leading-[.94] tracking-[-0.04em] sm:text-6xl">The floor,<br />in focus.</h2></div><p className="max-w-xl text-lg leading-8 text-muted-foreground">Hospitality moves at the speed of attention. Harbor gives managers the signal they need, and staff the context they deserve — so service stays personal, even when the room is full.</p></div>
-          <div className="mt-14 grid gap-5 md:grid-cols-2">
-            <div className="relative overflow-hidden rounded-3xl bg-accent p-7 sm:p-10"><div className="absolute -right-20 -top-24 h-64 w-64 rounded-full border-[30px] border-background/20" /><Clock3 size={24} className="relative text-primary" /><h3 className="relative mt-20 max-w-xs font-display text-4xl leading-none">Know what needs you next.</h3><p className="relative mt-4 max-w-sm text-sm leading-6 text-foreground/65">The queue is ordered by the work, not by the noise. Urgent stays urgent. Everything else stays visible.</p></div>
-            <div className="rounded-3xl border border-border bg-card p-7 sm:p-10"><Sparkles size={24} className="text-primary" /><h3 className="mt-20 max-w-xs font-display text-4xl leading-none">Give guests a little more ease.</h3><p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">Clear service options, a space for context, and a private tracking link that keeps them in the loop.</p><div className="mt-9 flex items-center gap-2 text-xs font-bold text-primary"><Check size={15} /> No download required</div></div>
+      {/* Subscription Pricing Tiers */}
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-xs font-mono uppercase tracking-widest text-amber-400">SAAS PLANS</h2>
+          <p className="text-3xl font-black text-white mt-2 uppercase tracking-tight">Scalable Multi-Tenant Pricing</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white uppercase">Starter</h3>
+              <p className="text-3xl font-black text-amber-400 mt-2">$49<span className="text-xs font-normal text-slate-400">/mo</span></p>
+              <ul className="mt-6 space-y-2 text-xs text-slate-400">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 1 Location</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Up to 5 Staff</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 50 Service Points</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => setLocation('/sign-up')}
+              className="mt-8 w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl uppercase transition"
+            >
+              Choose Starter
+            </button>
           </div>
-        </section>
 
-        <section id="proof" className="border-t border-border bg-muted/55 px-5 py-16 sm:px-8 lg:px-10"><div className="mx-auto flex max-w-7xl flex-col gap-7 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-mono-app text-[10px] uppercase tracking-[0.18em] text-primary">A better standard</p><p className="mt-3 max-w-2xl font-display text-3xl leading-tight sm:text-4xl">“The best service feels effortless. The best operations make that possible.”</p></div><Link href="/sign-up" className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-primary hover:gap-3" data-testid="link-proof-start">Start with Harbor <ArrowRight size={16} /></Link></div></section>
-      </main>
-      <footer className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-7 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10"><span className="font-mono-app uppercase tracking-[0.15em]">Harbor / Hospitality operations</span><span>Built for places people remember.</span></footer>
+          <div className="bg-slate-900 border border-amber-500/40 rounded-3xl p-6 flex flex-col justify-between relative shadow-xl shadow-amber-500/5">
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 font-black text-[9px] uppercase tracking-widest px-3 py-1 rounded-full">
+              Most Popular
+            </span>
+            <div>
+              <h3 className="text-lg font-bold text-white uppercase">Pro</h3>
+              <p className="text-3xl font-black text-amber-400 mt-2">$149<span className="text-xs font-normal text-slate-400">/mo</span></p>
+              <ul className="mt-6 space-y-2 text-xs text-slate-400">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Multiple Zones</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Unlimited Staff</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Analytics Dashboard</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => setLocation('/sign-up')}
+              className="mt-8 w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl uppercase transition"
+            >
+              Choose Pro
+            </button>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white uppercase">Hotel</h3>
+              <p className="text-3xl font-black text-amber-400 mt-2">$299<span className="text-xs font-normal text-slate-400">/mo</span></p>
+              <ul className="mt-6 space-y-2 text-xs text-slate-400">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Multiple Outlets</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Large Room Outlets</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Advanced Metrics</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => setLocation('/sign-up')}
+              className="mt-8 w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl uppercase transition"
+            >
+              Choose Hotel
+            </button>
+          </div>
+
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white uppercase">Enterprise</h3>
+              <p className="text-3xl font-black text-amber-400 mt-2">$499<span className="text-xs font-normal text-slate-400">+/mo</span></p>
+              <ul className="mt-6 space-y-2 text-xs text-slate-400">
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Multi-Property Chains</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> Dedicated Admin</li>
+                <li className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> SLA Support</li>
+              </ul>
+            </div>
+            <button
+              onClick={() => setLocation('/sign-up')}
+              className="mt-8 w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl uppercase transition"
+            >
+              Contact Sales
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-900 py-8 text-center text-xs text-slate-600 font-mono">
+        SilentServe • Production-Ready QR Service Protocol
+      </footer>
     </div>
   );
 }

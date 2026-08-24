@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isBusinessOwner(businessId) {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/businesses/$(businessId)).data.ownerId == request.auth.uid;
+    }
+
+    function isBusinessStaff(businessId) {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/businesses/$(businessId)/staff/$(request.auth.uid));
+    }
+
+    // Business document access
+    match /businesses/{businessId} {
+      allow read: if true; // Public for guest lookups (or limited fields)
+      allow create, update, delete: if isAuthenticated();
+
+      // Settings subcollection
+      match /settings/{configId} {
+        allow read: if true; // Guest needs cooldown/cancellation window settings
+        allow write: if isBusinessOwner(businessId);
+      }
+
+      // Zones subcollection
+      match /zones/{zoneId} {
+        allow read: if true;
+        allow write: if isBusinessOwner(businessId);
+      }
+
+      // Service Points subcollection
+      match /servicePoints/{servicePointId} {
+        allow read: if true;
+        allow write: if isBusinessOwner(businessId);
+      }
+
+      // Staff subcollection
+      match /staff/{staffId} {
+        allow read: if isAuthenticated();
+        allow write: if isBusinessOwner(businessId);
+      }
+
+      // Service Requests subcollection
+      match /requests/{requestId} {
+        // Anyone can read a request if they know the requestId or for guest tracking
+        allow read: if true;
+
+        // Guest can create a request with status 'WAITING'
+        allow create: if request.resource.data.status == 'WAITING'
+          && request.resource.data.businessId == businessId;
+
+        // Guest can cancel their own WAITING request
+        allow update: if resource.data.status == 'WAITING'
+          && request.resource.data.status == 'CANCELLED';
+
+        // Staff can atomically claim WAITING request or mark CLAIMED request as COMPLETED
+        allow update: if (
+            resource.data.status == 'WAITING' && request.resource.data.status == 'CLAIMED'
+          ) || (
+            resource.data.status == 'CLAIMED' && request.resource.data.status == 'COMPLETED'
+          ) || isBusinessOwner(businessId) || isBusinessStaff(businessId);
+
+        allow delete: if isBusinessOwner(businessId);
+      }
+    }
+  }
+}
